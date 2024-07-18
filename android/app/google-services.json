@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "647047604625",
+    "project_id": "imtihon-4",
+    "storage_bucket": "imtihon-4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647047604625:android:8073af31501b0087439230",
+        "android_client_info": {
+          "package_name": "com.example.imtihon4"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC01jufj4pPED1e1joWOQ4hQtpM3-1lX3Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
