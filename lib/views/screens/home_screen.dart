@@ -1,12 +1,13 @@
-import 'dart:async';
 
-import 'package:carousel_slider/carousel_slider.dart';
+
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imtihon4/controllers/event_controller.dart';
 import 'package:imtihon4/controllers/notification_controller.dart';
+import 'package:imtihon4/controllers/user_controller.dart';
 import 'package:imtihon4/models/event.dart';
 import 'package:imtihon4/models/notification.dart';
 import 'package:imtihon4/models/user.dart';
@@ -15,7 +16,6 @@ import 'package:imtihon4/views/screens/login_screen.dart';
 import 'package:imtihon4/views/screens/notification_screen.dart';
 import 'package:imtihon4/views/widgets/custom_drawer.dart';
 import 'package:provider/provider.dart';
-import 'package:imtihon4/controllers/user_controller.dart'; // UserController import qiling
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -173,170 +173,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            Text(
-              "Near 7 day",
-              style: TextStyle(fontSize: 18.h, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(height: 10.h),
-            StreamBuilder(
-                stream: userController.getCurrentUsers(),
-                builder: (context, snapshott) {
-                  if (snapshott.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  Users user = Users.fromJsons(snapshott.data!);
-                  return StreamBuilder(
-                      stream: eventsController.getEvents(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        }
-                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                          return const Center(child: Text("No Event"));
-                        }
-
-                        final events = snapshot.data!.docs;
-                        DateTime now = DateTime.now();
-                        DateTime sevenDaysFromNow =
-                            now.add(const Duration(days: 7));
-                        caruselBox.clear();
-
-                        for (var i = 0; i < events.length; i++) {
-                          Event event = Event.fromJson(events[i]);
-                          DateTime eventDate = event.date;
-                          eventDate = DateTime(
-                              eventDate.year,
-                              eventDate.month,
-                              eventDate.day,
-                              int.parse(event.time.split(":")[0]),
-                              int.parse(event.time.split(":")[1]));
-                          if (eventDate.isAfter(now) &&
-                              eventDate.isBefore(sevenDaysFromNow)) {
-                            caruselBox.add(event);
-                          }
-                        }
-
-                        return caruselBox.isNotEmpty
-                            ? Center(
-                                child: CarouselSlider(
-                                  options: CarouselOptions(
-                                    height: 200.h,
-                                    aspectRatio: 16 / 9,
-                                    enlargeCenterPage: true,
-                                    autoPlay: true,
-                                    autoPlayCurve: Curves.fastOutSlowIn,
-                                    enableInfiniteScroll: true,
-                                    autoPlayAnimationDuration:
-                                        const Duration(milliseconds: 800),
-                                    viewportFraction: 0.8,
-                                  ),
-                                  items: caruselBox.map((item) {
-                                    return InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  EventDetailes(event: item),
-                                            ));
-                                      },
-                                      child: Container(
-                                        width: 1000.h,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          image: DecorationImage(
-                                            image: item.imageUrl != null
-                                                ? NetworkImage(item.imageUrl!)
-                                                : const AssetImage(
-                                                    "assets/notfound.jpg"),
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        clipBehavior: Clip.hardEdge,
-                                        padding: const EdgeInsets.all(20),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.black,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  padding:
-                                                      const EdgeInsets.all(10),
-                                                  child: Column(
-                                                    children: [
-                                                      Text(
-                                                        item.date.day
-                                                            .toString(),
-                                                        style: const TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                      Text(
-                                                        months[item.date.month -
-                                                            1],
-                                                        style: const TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                IconButton(
-                                                  onPressed: () {
-                                                    userController.isLiked(
-                                                        item.id, user.isLiked);
-                                                  },
-                                                  icon: user.isLiked
-                                                          .contains(item.id)
-                                                      ? Icon(
-                                                          CupertinoIcons
-                                                              .heart_fill,
-                                                          size: 28.h,
-                                                          color: Colors.red,
-                                                        )
-                                                      : Icon(
-                                                          CupertinoIcons.heart,
-                                                          size: 28.h,
-                                                          color: Colors.white,
-                                                        ),
-                                                )
-                                              ],
-                                            ),
-                                            Text(
-                                              item.title,
-                                              style: TextStyle(
-                                                  fontSize: 22.h,
-                                                  fontWeight: FontWeight.w600),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              )
-                            : const SizedBox();
-                      });
-                }),
             SizedBox(height: 10.h),
             Text(
               "All Events",

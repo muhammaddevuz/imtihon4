@@ -77,6 +77,7 @@ class _EditEventState extends State<EditEvent> {
       if (latLng != null) {
         try {
           await Future.delayed(const Duration(seconds: 3), () {
+            // ignore: use_build_context_synchronously
             Provider.of<EventController>(context, listen: false).editEvent(
                 widget.event.id,
                 title!,

@@ -212,7 +212,6 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
                           .getCurrentUsersFuture(widget.event.creatorId);
 
                       Users user = Users.fromJsons(userbox);
-                      print("${notificationBox.data()}----------------------");
 
                       DateTime dateTime = DateTime.now();
                       if (notificationBox.data() == null) {
